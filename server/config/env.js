@@ -12,6 +12,7 @@ for (const varName of requiredVars) {
 module.exports = {
   PORT: process.env.PORT || 5000,
   MONGO_URI: process.env.MONGO_URI,
+  JWT_SECRET: process.env.JWT_SECRET || "dev-secret-change-in-production",
   AUTH0_ISSUER: process.env.AUTH0_ISSUER,
   AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,

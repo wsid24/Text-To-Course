@@ -1,7 +1,8 @@
 const Course = require("../models/Course");
 const Module = require("../models/Module");
 const Lesson = require("../models/Lesson");
-const { generateCourse: generateCourseAI } = require("../services/geminiService");
+const CurriculumAgent = require("../services/CurriculumAgent");
+const CacheService = require("../services/CacheService");
 
 const generateCourse = async (req, res, next) => {
   try {
@@ -10,13 +11,17 @@ const generateCourse = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Topic is required" });
     }
 
-    const courseData = await generateCourseAI(topic);
-    
-    // Support Auth0 sub or standard req.user.id depending on what's available
-    const creator = req.auth?.payload?.sub || req.user?.id;
-    if (!creator) {
-        return res.status(401).json({ success: false, message: "Unauthorized: No creator ID" });
+    const cacheKey = `course:${topic.toLowerCase().replace(/\\s+/g, '-')}`;
+    let courseData = await CacheService.get(cacheKey);
+
+    if (!courseData) {
+      courseData = await CurriculumAgent.generateCourse(topic);
+      await CacheService.set(cacheKey, courseData, 86400); // 1 day TTL
+    } else {
+      console.log(`⚡ Serving curriculum for '${topic}' from Redis Cache (Latency reduced)`);
     }
+    
+    const creator = req.user.id;
 
     const course = await Course.create({
       title: courseData.title,
@@ -66,7 +71,7 @@ const generateCourse = async (req, res, next) => {
 
 const getUserCourses = async (req, res, next) => {
   try {
-    const creator = req.auth?.payload?.sub || req.user?.id;
+    const creator = req.user.id;
     const courses = await Course.find({ creator })
       .populate({
         path: "modules",
@@ -82,7 +87,7 @@ const getUserCourses = async (req, res, next) => {
 
 const getCourseById = async (req, res, next) => {
   try {
-    const creator = req.auth?.payload?.sub || req.user?.id;
+    const creator = req.user.id;
     const course = await Course.findOne({ _id: req.params.id, creator }).populate({
       path: "modules",
       populate: { path: "lessons" },
@@ -100,7 +105,7 @@ const getCourseById = async (req, res, next) => {
 
 const deleteCourse = async (req, res, next) => {
   try {
-    const creator = req.auth?.payload?.sub || req.user?.id;
+    const creator = req.user.id;
     const course = await Course.findOne({ _id: req.params.id, creator });
 
     if (!course) {

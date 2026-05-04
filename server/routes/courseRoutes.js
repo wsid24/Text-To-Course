@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const checkJwt = require("../middlewares/checkJwt");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   generateCourse,
   getUserCourses,
@@ -8,8 +8,8 @@ const {
   deleteCourse,
 } = require("../controllers/courseController");
 
-// Protect all course routes with Auth0 middleware
-router.use(checkJwt);
+// Protect all course routes with JWT auth middleware
+router.use(authMiddleware);
 
 // POST /api/courses/generate-course
 router.post("/generate-course", generateCourse);

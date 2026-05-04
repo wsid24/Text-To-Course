@@ -1,7 +1,7 @@
 const Lesson = require("../models/Lesson");
 const Module = require("../models/Module");
 const Course = require("../models/Course");
-const { generateLesson: generateLessonAI } = require("../services/geminiService");
+const CurriculumAgent = require("../services/CurriculumAgent");
 
 const generateLessonContent = async (req, res, next) => {
   try {
@@ -14,12 +14,12 @@ const generateLessonContent = async (req, res, next) => {
     const parentModule = lesson.module;
     const course = await Course.findById(parentModule.course);
 
-    const creator = req.auth?.payload?.sub || req.user?.id;
-    if (course.creator !== creator) {
+    const creator = req.user.id;
+    if (course.creator.toString() !== creator.toString()) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    const lessonData = await generateLessonAI(course.title, parentModule.title, lesson.title);
+    const lessonData = await CurriculumAgent.generateLesson(course.title, parentModule.title, lesson.title);
 
     let blocks = [];
     if (Array.isArray(lessonData)) {

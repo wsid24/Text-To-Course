@@ -2,13 +2,24 @@ const redis = require("redis");
 
 class CacheService {
   constructor() {
-    this.client = redis.createClient({
-      url: process.env.REDIS_URL || "redis://localhost:6379",
-    });
-    this.client.on("error", (err) => console.warn("Redis Client Error", err.message));
     this.isConnected = false;
-    // Attempt connection immediately, but gracefully degrade if Redis is down
-    this.connect().catch(() => {});
+    this._errorLogged = false;
+    try {
+      this.client = redis.createClient({
+        url: process.env.REDIS_URL || "redis://localhost:6379",
+        socket: { reconnectStrategy: false }, // Don't spam reconnect attempts
+      });
+      this.client.on("error", () => {
+        if (!this._errorLogged) {
+          console.warn("⚠️ Redis not available. Caching disabled.");
+          this._errorLogged = true;
+        }
+      });
+      this.connect().catch(() => {});
+    } catch {
+      console.warn("⚠️ Redis client creation failed. Caching disabled.");
+      this.client = null;
+    }
   }
 
   async connect() {
