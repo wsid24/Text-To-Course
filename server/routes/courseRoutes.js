@@ -5,6 +5,7 @@ const {
   generateCourse,
   getUserCourses,
   getCourseById,
+  deleteCourse,
 } = require("../controllers/courseController");
 
 // Protect all course routes with Auth0 middleware
@@ -18,5 +19,8 @@ router.get("/", getUserCourses);
 
 // GET /api/courses/:id
 router.get("/:id", getCourseById);
+
+// DELETE /api/courses/:id
+router.delete("/:id", deleteCourse);
 
 module.exports = router;

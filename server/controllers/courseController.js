@@ -98,8 +98,31 @@ const getCourseById = async (req, res, next) => {
   }
 };
 
+const deleteCourse = async (req, res, next) => {
+  try {
+    const creator = req.auth?.payload?.sub || req.user?.id;
+    const course = await Course.findOne({ _id: req.params.id, creator });
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const modules = await Module.find({ course: course._id });
+    const moduleIds = modules.map(m => m._id);
+
+    await Lesson.deleteMany({ module: { $in: moduleIds } });
+    await Module.deleteMany({ course: course._id });
+    await Course.deleteOne({ _id: course._id });
+
+    res.json({ success: true, message: "Course deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   generateCourse,
   getUserCourses,
   getCourseById,
+  deleteCourse,
 };
