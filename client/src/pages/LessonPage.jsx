@@ -12,13 +12,7 @@ import toast from 'react-hot-toast';
 
 function HeadingBlock({ block }) {
   return (
-    <h2 style={{
-      fontSize: '1.35rem', fontWeight: 700,
-      color: 'var(--text-primary)',
-      marginTop: 'var(--space-xl)',
-      marginBottom: 'var(--space-sm)',
-      letterSpacing: '-0.01em',
-    }}>
+    <h2 className="prose-heading">
       {block.text || block.value}
     </h2>
   );
@@ -26,11 +20,7 @@ function HeadingBlock({ block }) {
 
 function ParagraphBlock({ block }) {
   return (
-    <p style={{
-      color: 'var(--text-secondary)',
-      fontSize: '0.95rem', lineHeight: 1.85,
-      marginBottom: 'var(--space-md)',
-    }}>
+    <p className="prose-paragraph">
       {block.text || block.value}
     </p>
   );

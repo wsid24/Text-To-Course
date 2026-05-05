@@ -13,9 +13,10 @@ class CurriculumAgent {
   _getModel() {
     if (!this._model) {
       this._model = new ChatGoogleGenerativeAI({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.0-flash-lite",
         temperature: 0.2,
         apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
+        maxRetries: 2,
       });
     }
     return this._model;
@@ -55,9 +56,8 @@ class CurriculumAgent {
     const context = await RAGService.retrieveContext(`Curriculum design for ${topic}`);
     console.log(`📚 Agent: Retrieved grounding context from VectorDB`);
 
-    // 2. Construct Chain-of-Thought prompt
+    // 2. Construct prompt (Removed CoT to vastly increase generation speed)
     const systemPrompt = `You are an expert curriculum designer agent.
-Think step-by-step (Chain-of-Thought) before producing the final curriculum to ensure logical progression.
 Use the following verified context to ground your curriculum and reduce hallucinations:
 <context>
 ${context}
@@ -104,9 +104,9 @@ Shape:
     // 1. Retrieve grounding context (RAG)
     const context = await RAGService.retrieveContext(`${lessonTitle} in ${courseTitle}`);
 
-    // 2. Construct Chain-of-Thought prompt
+    // 2. Construct prompt (Removed CoT to increase speed)
     const systemPrompt = `You are an expert educator agent.
-Think step-by-step to design engaging, highly educational lesson content.
+Design engaging, highly educational lesson content.
 Ground your content in this verified context to avoid hallucinations:
 <context>
 ${context}

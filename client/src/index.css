@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap');
 
 /* ═══════════════════════════════════════════
    DESIGN TOKENS
@@ -7,6 +7,7 @@
 :root {
   /* ── Typography ── */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* ── Spacing ── */
@@ -40,93 +41,93 @@
 }
 
 /* ═══════════════════════════════════════════
-   DARK MODE (DEFAULT)
+   DARK MODE (DEFAULT) - GROK EMERALD
    ═══════════════════════════════════════════ */
 
 [data-theme="dark"] {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #111118;
-  --bg-tertiary: #18181f;
-  --bg-elevated: #1e1e28;
-  --bg-hover: #252530;
-  --bg-active: #2a2a38;
+  --bg-primary: #050505;
+  --bg-secondary: #09090b;
+  --bg-tertiary: #101014;
+  --bg-elevated: #18181c;
+  --bg-hover: #1f1f24;
+  --bg-active: #27272c;
 
-  --surface-glass: rgba(255, 255, 255, 0.03);
-  --surface-glass-hover: rgba(255, 255, 255, 0.06);
-  --surface-glass-border: rgba(255, 255, 255, 0.06);
+  --surface-glass: rgba(255, 255, 255, 0.02);
+  --surface-glass-hover: rgba(255, 255, 255, 0.04);
+  --surface-glass-border: rgba(255, 255, 255, 0.08);
 
-  --text-primary: #f0f0f5;
-  --text-secondary: #a0a0b8;
-  --text-tertiary: #6b6b80;
-  --text-inverse: #0a0a0f;
+  --text-primary: #f8fafc;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-inverse: #050505;
 
-  --border-primary: rgba(255, 255, 255, 0.08);
-  --border-secondary: rgba(255, 255, 255, 0.04);
-  --border-accent: rgba(99, 102, 241, 0.3);
+  --border-primary: rgba(255, 255, 255, 0.12);
+  --border-secondary: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(16, 185, 129, 0.4);
 
-  --accent-primary: #818cf8;
-  --accent-primary-hover: #a5b4fc;
-  --accent-gradient: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
-  --accent-glow: rgba(129, 140, 248, 0.2);
+  --accent-primary: #10b981;
+  --accent-primary-hover: #34d399;
+  --accent-gradient: linear-gradient(135deg, #34d399 0%, #047857 100%);
+  --accent-glow: rgba(16, 185, 129, 0.15);
 
   --success: #34d399;
   --warning: #fbbf24;
-  --danger: #f87171;
-  --info: #60a5fa;
+  --danger: #ef4444;
+  --info: #38bdf8;
 
-  --code-bg: #0d0d14;
-  --code-border: rgba(255, 255, 255, 0.06);
+  --code-bg: #09090b;
+  --code-border: rgba(255, 255, 255, 0.08);
 
-  --sidebar-bg: #0e0e15;
-  --sidebar-border: rgba(255, 255, 255, 0.05);
+  --sidebar-bg: #050505;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
 
-  --scrollbar-track: #111118;
-  --scrollbar-thumb: #2a2a38;
+  --scrollbar-track: #09090b;
+  --scrollbar-thumb: #27272c;
 }
 
 /* ═══════════════════════════════════════════
-   LIGHT MODE
+   LIGHT MODE - GROK EMERALD
    ═══════════════════════════════════════════ */
 
 [data-theme="light"] {
-  --bg-primary: #fafafa;
+  --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #f5f5f7;
+  --bg-tertiary: #f1f5f9;
   --bg-elevated: #ffffff;
-  --bg-hover: #f0f0f2;
-  --bg-active: #e8e8ec;
+  --bg-hover: #e2e8f0;
+  --bg-active: #cbd5e1;
 
-  --surface-glass: rgba(255, 255, 255, 0.7);
-  --surface-glass-hover: rgba(255, 255, 255, 0.9);
+  --surface-glass: rgba(255, 255, 255, 0.8);
+  --surface-glass-hover: rgba(255, 255, 255, 0.95);
   --surface-glass-border: rgba(0, 0, 0, 0.08);
 
-  --text-primary: #1a1a2e;
-  --text-secondary: #555570;
-  --text-tertiary: #8888a0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
   --text-inverse: #ffffff;
 
-  --border-primary: rgba(0, 0, 0, 0.08);
-  --border-secondary: rgba(0, 0, 0, 0.04);
-  --border-accent: rgba(99, 102, 241, 0.3);
+  --border-primary: rgba(0, 0, 0, 0.12);
+  --border-secondary: rgba(0, 0, 0, 0.06);
+  --border-accent: rgba(16, 185, 129, 0.4);
 
-  --accent-primary: #6366f1;
-  --accent-primary-hover: #4f46e5;
-  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  --accent-glow: rgba(99, 102, 241, 0.12);
+  --accent-primary: #059669;
+  --accent-primary-hover: #10b981;
+  --accent-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  --accent-glow: rgba(16, 185, 129, 0.12);
 
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
   --info: #3b82f6;
 
-  --code-bg: #f4f4f8;
-  --code-border: rgba(0, 0, 0, 0.06);
+  --code-bg: #f1f5f9;
+  --code-border: rgba(0, 0, 0, 0.08);
 
   --sidebar-bg: #ffffff;
-  --sidebar-border: rgba(0, 0, 0, 0.06);
+  --sidebar-border: rgba(0, 0, 0, 0.08);
 
-  --scrollbar-track: #f0f0f2;
-  --scrollbar-thumb: #c8c8d0;
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #cbd5e1;
 }
 
 /* ═══════════════════════════════════════════
@@ -445,23 +446,50 @@ img { max-width: 100%; display: block; }
    READING / PROSE
    ═══════════════════════════════════════════ */
 
-.prose h1, .prose h2, .prose h3, .prose h4 {
-  color: var(--text-primary);
-  font-weight: 700;
-  line-height: 1.3;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+.prose {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.prose h1 { font-size: 1.75rem; }
-.prose h2 { font-size: 1.4rem; }
-.prose h3 { font-size: 1.15rem; }
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 800;
+  line-height: 1.25;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  letter-spacing: -0.02em;
+}
 
-.prose p {
+.prose-heading {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.prose h1 { font-size: 2.75rem; }
+.prose h2 { font-size: 2.2rem; }
+.prose h3 { font-size: 1.6rem; }
+
+.prose p, .prose-paragraph {
+  font-family: var(--font-serif);
   color: var(--text-secondary);
-  line-height: 1.8;
-  margin-bottom: 1em;
-  font-size: 0.95rem;
+  line-height: 1.95;
+  margin-bottom: 1.5em;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+}
+
+.prose p:first-of-type::first-letter, .prose-paragraph:first-of-type::first-letter {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  float: left;
+  line-height: 1;
+  padding-right: 0.5rem;
+  padding-top: 0.2rem;
 }
 
 .prose pre {
@@ -480,13 +508,16 @@ img { max-width: 100%; display: block; }
 }
 
 .prose ul, .prose ol {
+  font-family: var(--font-serif);
   padding-left: 1.5em;
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
   color: var(--text-secondary);
+  font-size: 1.15rem;
+  line-height: 1.95;
 }
 
 .prose li {
-  margin-bottom: 0.35em;
+  margin-bottom: 0.5em;
   list-style: disc;
 }
 

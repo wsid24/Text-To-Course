@@ -1,7 +1,7 @@
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sun, Moon, BookOpen, LogOut, Menu, X } from 'lucide-react';
+import { Sun, Moon, Hexagon, BookOpen, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
@@ -43,17 +43,17 @@ export default function Navbar() {
           textDecoration: 'none',
         }}>
           <div style={{
-            width: 32, height: 32,
-            borderRadius: 'var(--radius-md)',
-            background: 'var(--accent-gradient)',
+            width: 34, height: 34,
+            position: 'relative',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <BookOpen size={18} color="#fff" />
+            <Hexagon size={34} color="#d4af37" strokeWidth={1.8} style={{ position: 'absolute' }} />
+            <BookOpen size={15} color="#d4af37" strokeWidth={2.2} style={{ position: 'relative', zIndex: 1 }} />
           </div>
           <span style={{
             fontWeight: 800,
             fontSize: '1.1rem',
-            background: 'var(--accent-gradient)',
+            background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             letterSpacing: '-0.02em',

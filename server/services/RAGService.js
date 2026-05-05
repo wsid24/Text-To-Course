@@ -16,8 +16,9 @@ class RAGService {
   _getEmbeddings() {
     if (!this.embeddings) {
       this.embeddings = new GoogleGenerativeAIEmbeddings({
-        model: "embedding-001",
+        model: "gemini-embedding-001",
         apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
+        maxRetries: 0,
       });
     }
     return this.embeddings;

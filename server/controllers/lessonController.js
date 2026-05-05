@@ -39,9 +39,10 @@ const generateLessonContent = async (req, res, next) => {
       }
     }
 
-    // Enrich video blocks with actual YouTube video IDs
-    for (const block of blocks) {
-      if (block.type === 'video' && block.query && YOUTUBE_API_KEY) {
+    // Enrich video blocks with actual YouTube video IDs concurrently
+    const videoPromises = blocks
+      .filter(b => b.type === 'video' && b.query && YOUTUBE_API_KEY)
+      .map(async (block) => {
         try {
           const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(block.query)}&key=${YOUTUBE_API_KEY}&type=video`;
           const ytRes = await fetch(url);
@@ -53,8 +54,9 @@ const generateLessonContent = async (req, res, next) => {
         } catch (err) {
           console.error("YouTube search failed:", err.message);
         }
-      }
-    }
+      });
+      
+    await Promise.all(videoPromises);
 
     lesson.content = blocks;
     lesson.isEnriched = true;
