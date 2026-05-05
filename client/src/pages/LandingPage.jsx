@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Sparkles, BookOpen, Brain, Zap, ArrowRight, ChevronRight } from 'lucide-react';
+import AnimatedBackground from '../components/ui/AnimatedBackground';
 
 const features = [
   {
@@ -21,10 +22,13 @@ const features = [
 
 export default function LandingPage() {
   return (
-    <div style={{ overflow: 'hidden' }}>
+    <div style={{ overflow: 'hidden', position: 'relative' }}>
+      <AnimatedBackground />
+      
       {/* ─── HERO ─── */}
       <section style={{
         position: 'relative',
+        zIndex: 1,
         minHeight: 'calc(100vh - 64px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 'var(--space-3xl) var(--space-lg)',
@@ -97,6 +101,8 @@ export default function LandingPage() {
 
       {/* ─── FEATURES ─── */}
       <section style={{
+        position: 'relative',
+        zIndex: 1,
         maxWidth: 1000,
         margin: '0 auto',
         padding: 'var(--space-3xl) var(--space-lg)',
@@ -139,6 +145,8 @@ export default function LandingPage() {
 
       {/* ─── CTA BANNER ─── */}
       <section style={{
+        position: 'relative',
+        zIndex: 1,
         maxWidth: 900,
         margin: '0 auto var(--space-3xl)',
         padding: 'var(--space-lg)',
@@ -184,6 +192,8 @@ export default function LandingPage() {
 
       {/* ─── FOOTER ─── */}
       <footer style={{
+        position: 'relative',
+        zIndex: 1,
         borderTop: '1px solid var(--border-primary)',
         padding: 'var(--space-xl) var(--space-lg)',
         textAlign: 'center',

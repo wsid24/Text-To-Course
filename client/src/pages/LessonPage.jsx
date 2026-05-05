@@ -78,6 +78,33 @@ function CodeBlock({ block }) {
 }
 
 function VideoBlock({ block }) {
+  if (block.videoId || block.url?.includes('youtube.com/watch?v=')) {
+    const videoId = block.videoId || new URL(block.url).searchParams.get('v');
+    return (
+      <div style={{ marginBottom: 'var(--space-lg)' }}>
+        <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: 'var(--space-sm)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Play size={16} style={{ color: '#ef4444' }} /> Recommended Video
+        </div>
+        <div style={{
+          position: 'relative',
+          paddingBottom: '56.25%', /* 16:9 */
+          height: 0,
+          overflow: 'hidden',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border-primary)'
+        }}>
+          <iframe
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+            src={`https://www.youtube.com/embed/${videoId}`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title="Video Recommendation"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{
       marginBottom: 'var(--space-lg)',

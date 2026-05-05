@@ -2,6 +2,7 @@ const Lesson = require("../models/Lesson");
 const Module = require("../models/Module");
 const Course = require("../models/Course");
 const CurriculumAgent = require("../services/CurriculumAgent");
+const { YOUTUBE_API_KEY } = require("../config/env");
 
 const generateLessonContent = async (req, res, next) => {
   try {
@@ -35,6 +36,23 @@ const generateLessonContent = async (req, res, next) => {
          blocks = lessonData.lessonContent;
       } else {
         blocks = lessonData.blocks || lessonData.items || lessonData.content || [lessonData];
+      }
+    }
+
+    // Enrich video blocks with actual YouTube video IDs
+    for (const block of blocks) {
+      if (block.type === 'video' && block.query && YOUTUBE_API_KEY) {
+        try {
+          const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(block.query)}&key=${YOUTUBE_API_KEY}&type=video`;
+          const ytRes = await fetch(url);
+          const ytData = await ytRes.json();
+          if (ytData.items && ytData.items.length > 0) {
+            block.videoId = ytData.items[0].id.videoId;
+            block.url = `https://www.youtube.com/watch?v=${block.videoId}`;
+          }
+        } catch (err) {
+          console.error("YouTube search failed:", err.message);
+        }
       }
     }
 
