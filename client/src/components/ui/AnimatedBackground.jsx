@@ -12,23 +12,24 @@ export default function AnimatedBackground() {
     let particles = [];
     let mouse = { x: -1000, y: -1000, radius: 180 };
 
-    const emerald = '16, 185, 129';
-    const gold = '212, 175, 55';
-    
+    // Solo-cyan duotone — deep cyan main, lighter cyan accents.
+    const cyan = '6, 182, 212';
+    const cyanLight = '34, 211, 238';
+
     const initParticles = () => {
       particles = [];
-      // Responsive particle count
-      const numParticles = Math.floor((canvas.width * canvas.height) / 18000);
+      // Responsive particle count — slightly sparser for premium restraint.
+      const numParticles = Math.floor((canvas.width * canvas.height) / 22000);
       for (let i = 0; i < numParticles; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.8,
-          vy: (Math.random() - 0.5) * 0.8,
-          size: Math.random() * 4 + 3,
-          isGold: Math.random() > 0.7, // 30% gold, 70% emerald
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6,
+          size: Math.random() * 3.5 + 2.5,
+          isAccent: Math.random() > 0.75, // 25% lighter accent, 75% main cyan
           rotation: Math.random() * Math.PI * 2,
-          vr: (Math.random() - 0.5) * 0.02
+          vr: (Math.random() - 0.5) * 0.02,
         });
       }
     };
@@ -119,9 +120,9 @@ export default function AnimatedBackground() {
         }
 
         // Draw node
-        const rgb = p.isGold ? gold : emerald;
+        const rgb = p.isAccent ? cyanLight : cyan;
         const color = `rgba(${rgb}, ${baseAlpha})`;
-        
+
         drawHexagon(p.x, p.y, p.size, p.rotation, color);
 
         // Constellation lines
@@ -130,14 +131,11 @@ export default function AnimatedBackground() {
           const dx2 = p.x - p2.x;
           const dy2 = p.y - p2.y;
           const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-          
-          if (distance2 < 120) {
-            const opacity = (1 - distance2 / 120) * lineAlpha;
-            // Mixed color line if they are different
+
+          if (distance2 < 130) {
+            const opacity = (1 - distance2 / 130) * lineAlpha;
             ctx.beginPath();
-            ctx.strokeStyle = p.isGold 
-              ? `rgba(${gold}, ${opacity})` 
-              : `rgba(${emerald}, ${opacity})`;
+            ctx.strokeStyle = `rgba(${cyan}, ${opacity})`;
             ctx.lineWidth = 1;
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);

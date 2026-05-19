@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LLMProvider } from './context/LLMContext';
 import Navbar from './components/layout/Navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -41,6 +42,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
+        <LLMProvider>
         <BrowserRouter>
           <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Navbar />
@@ -62,6 +64,7 @@ export default function App() {
             }}
           />
         </BrowserRouter>
+        </LLMProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -1,25 +1,30 @@
 import { Link } from 'react-router-dom';
-import { Sparkles, BookOpen, Brain, Zap, ArrowRight, User } from 'lucide-react';
+import { Sparkles, BookOpen, Zap, ArrowRight, Brain, FileText, Layers, Shield } from 'lucide-react';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
 
 export default function LandingPage() {
   return (
-    <div style={{ overflow: 'hidden', position: 'relative', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div style={{
+      overflow: 'hidden',
+      position: 'relative',
+      minHeight: '100vh',
+      background: 'var(--bg-primary)',
+    }}>
       <AnimatedBackground />
-      
-      {/* ─── MASSIVE AMBIENT GLOW ─── */}
+
+      {/* Subtle radial accent glow behind hero */}
       <div style={{
         position: 'absolute',
-        top: '30%', left: '50%',
+        top: '25%', left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '80vw', height: '60vh',
-        background: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15) 0%, transparent 60%)',
+        width: '70vw', height: '55vh',
+        background: 'radial-gradient(ellipse at center, var(--accent-glow-strong) 0%, transparent 65%)',
         pointerEvents: 'none',
-        filter: 'blur(100px)',
+        filter: 'blur(80px)',
         zIndex: 0,
       }} />
 
-      {/* ─── HERO SECTION ─── */}
+      {/* HERO */}
       <section style={{
         position: 'relative',
         zIndex: 1,
@@ -28,112 +33,118 @@ export default function LandingPage() {
         alignItems: 'center', justifyContent: 'center',
         padding: 'var(--space-3xl) var(--space-lg)',
       }}>
-        
         <div className="animate-fade-in-up" style={{
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', textAlign: 'center',
-          maxWidth: 900,
+          maxWidth: 920,
         }}>
-          
-          {/* Top Pill Badge */}
-          <div style={{
+          {/* Pill */}
+          <div className="glass" style={{
             display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
             padding: '0.4rem 1rem', borderRadius: 'var(--radius-full)',
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.1)',
             color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 500,
             marginBottom: 'var(--space-xl)',
-            backdropFilter: 'blur(10px)',
           }}>
-            <Sparkles size={14} style={{ color: 'var(--accent-primary)' }} /> 
-            Our Engine, Your Success
+            <Sparkles size={14} style={{ color: 'var(--accent-primary)' }} />
+            AI-powered curriculum, in seconds
           </div>
 
-          {/* Main Title */}
+          {/* Headline */}
           <h1 style={{
-            fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+            fontSize: 'clamp(2.6rem, 6vw, 4.5rem)',
             fontFamily: 'var(--font-sans)',
             fontWeight: 800,
             lineHeight: 1.05,
             letterSpacing: '-0.04em',
-            background: 'linear-gradient(135deg, var(--text-primary) 0%, #d4af37 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            filter: 'drop-shadow(0 4px 15px rgba(0,0,0,0.4)) drop-shadow(0 0 40px rgba(212, 175, 55, 0.4))',
-            marginBottom: 'var(--space-sm)',
+            color: 'var(--text-primary)',
+            marginBottom: 'var(--space-md)',
           }}>
-            No Time Limit Course Generation
+            Turn any topic into a
+            <br />
+            <span style={{
+              background: 'var(--accent-gradient)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              filter: 'drop-shadow(0 0 32px var(--accent-glow-strong))',
+            }}>
+              complete course.
+            </span>
           </h1>
-          
-          <h2 style={{
-            fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-            fontFamily: 'var(--font-sans)',
-            fontWeight: 800,
-            lineHeight: 1.1,
-            letterSpacing: '-0.03em',
-            background: 'linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%)', 
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            filter: 'drop-shadow(0 4px 15px rgba(0,0,0,0.3)) drop-shadow(0 0 30px rgba(16, 185, 129, 0.5))',
-            marginBottom: 'var(--space-xl)',
-          }}>
-            Conquer your learning
-          </h2>
 
-          {/* Stat Badges (Fxology style) */}
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', gap: '1rem',
-            justifyContent: 'center',
+          {/* Subhead */}
+          <p style={{
+            color: 'var(--text-secondary)',
+            fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
+            lineHeight: 1.6,
+            maxWidth: 640,
             marginBottom: 'var(--space-2xl)',
           }}>
+            CourseForge generates structured modules, lessons, code blocks,
+            and quizzes — from a single prompt.
+          </p>
+
+          {/* CTAs */}
+          <div style={{
+            display: 'flex', gap: 'var(--space-md)',
+            justifyContent: 'center', flexWrap: 'wrap',
+            marginBottom: 'var(--space-3xl)',
+          }}>
+            <Link to="/register" className="btn btn-primary btn-lg">
+              Get started <ArrowRight size={16} />
+            </Link>
+            <Link to="/login" className="btn btn-secondary btn-lg">
+              Sign in
+            </Link>
+          </div>
+
+          {/* Feature row */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: 'var(--space-md)',
+            width: '100%', maxWidth: 880,
+          }}>
             {[
-              { icon: User, text: 'AI Generation' },
-              { icon: BookOpen, text: 'Infinite Subjects' },
-              { icon: Zap, text: 'Instant Results' }
-            ].map((stat, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'center', gap: '0.4rem',
-                color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 500,
+              { icon: Brain, label: 'Multi-stage AI pipeline', sub: 'Plan → write → validate' },
+              { icon: BookOpen, label: '3–6 modules · 3–5 lessons', sub: 'Structured curriculum' },
+              { icon: Layers, label: 'Interactive MCQ quizzes', sub: '4–5 per lesson, instant feedback' },
+              { icon: FileText, label: 'Offline PDF export', sub: 'jsPDF + html2canvas' },
+            ].map((f, i) => (
+              <div key={i} className="glass glass-hover" style={{
+                padding: 'var(--space-lg) var(--space-md)',
+                borderRadius: 'var(--radius-lg)',
+                textAlign: 'left',
               }}>
-                <stat.icon size={14} style={{ color: 'var(--accent-primary)' }} />
-                {stat.text}
+                <f.icon size={18} style={{ color: 'var(--accent-primary)', marginBottom: 'var(--space-sm)' }} />
+                <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)', marginBottom: 2 }}>
+                  {f.label}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
+                  {f.sub}
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Buttons */}
-          <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/register" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: '#ffffff', color: 'var(--accent-primary)',
-              padding: '0.8rem 2rem', borderRadius: 'var(--radius-full)',
-              fontWeight: 700, fontSize: '1rem',
-              boxShadow: '0 0 30px rgba(16, 185, 129, 0.3)',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              Start Generating <ArrowRight size={18} />
-            </Link>
-            
-            <Link to="/login" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: 'transparent', color: 'var(--text-primary)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              padding: '0.8rem 2rem', borderRadius: 'var(--radius-full)',
-              fontWeight: 600, fontSize: '1rem',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'var(--accent-primary)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
-            >
-              Free Trial
-            </Link>
+          {/* Trust strip */}
+          <div style={{
+            marginTop: 'var(--space-3xl)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            gap: 'var(--space-lg)', flexWrap: 'wrap',
+            color: 'var(--text-tertiary)', fontSize: '0.78rem',
+          }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Shield size={13} /> Auth0 secured
+            </span>
+            <span style={{ width: 1, height: 12, background: 'var(--border-primary)' }} />
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Zap size={13} /> Sub-second outline
+            </span>
+            <span style={{ width: 1, height: 12, background: 'var(--border-primary)' }} />
+            <span>3 concurrent sessions</span>
           </div>
         </div>
       </section>
-
     </div>
   );
 }

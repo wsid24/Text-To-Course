@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCourseById, generateLesson } from '../api/endpoints';
 import Spinner from '../components/ui/Spinner';
+import LessonPDFExporter from '../components/course/LessonPDFExporter';
 import {
   ArrowLeft, Sparkles, CheckCircle2, XCircle,
   Code2, Play, BookOpen, ChevronRight, ChevronLeft,
@@ -334,6 +335,19 @@ export default function LessonPage() {
         }}>
           {lesson.title}
         </h1>
+
+        {hasContent && (
+          <div style={{
+            display: 'flex', gap: 'var(--space-sm)',
+            marginTop: 'var(--space-md)', flexWrap: 'wrap',
+          }}>
+            <LessonPDFExporter
+              lesson={lesson}
+              courseTitle={course?.title}
+              filename={`${lesson.title.replace(/\s+/g, '_')}.pdf`}
+            />
+          </div>
+        )}
       </div>
 
       {/* Content area */}

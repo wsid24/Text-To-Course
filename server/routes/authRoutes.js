@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getMe, registerRules, loginRules } = require("../controllers/authController");
+const { getMe } = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
-const validate = require("../middlewares/validate");
 
-router.post("/register", registerRules, validate, register);
-router.post("/login", loginRules, validate, login);
+// Auth0 handles login/registration via its hosted pages.
+// The API only needs to verify tokens and echo the current user.
 router.get("/me", authMiddleware, getMe);
 
 module.exports = router;

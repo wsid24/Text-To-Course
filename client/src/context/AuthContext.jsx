@@ -1,45 +1,61 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { setTokenGetter } from '../api/axios';
 
 const AuthContext = createContext();
 
+/**
+ * Thin adapter over Auth0's React SDK. The rest of the app stays unaware
+ * of the underlying provider — it only sees `user`, `isAuthenticated`,
+ * `login()`, `logout()`. Swapping Auth0 for another OIDC provider is a
+ * one-file change.
+ */
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('ttc-token'));
-  const [loading, setLoading] = useState(true);
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    loginWithRedirect,
+    logout: auth0Logout,
+    getAccessTokenSilently,
+  } = useAuth0();
 
+  // Register the async token-getter with the axios interceptor.
   useEffect(() => {
-    if (token) {
-      localStorage.setItem('ttc-token', token);
-      // Decode a minimal user from the JWT payload (for display only)
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser({ id: payload.id || payload.sub, name: payload.name, email: payload.email });
-      } catch {
-        setUser({ id: 'user' });
-      }
-    } else {
-      localStorage.removeItem('ttc-token');
-      setUser(null);
-    }
-    setLoading(false);
-  }, [token]);
+    setTokenGetter(async () => {
+      if (!isAuthenticated) return null;
+      return getAccessTokenSilently({
+        authorizationParams: { audience: import.meta.env.VITE_AUTH0_AUDIENCE },
+      });
+    });
+  }, [getAccessTokenSilently, isAuthenticated]);
 
-  const login = (tokenValue, userData) => {
-    setToken(tokenValue);
-    if (userData) setUser(userData);
+  const login = () =>
+    loginWithRedirect({
+      authorizationParams: { audience: import.meta.env.VITE_AUTH0_AUDIENCE },
+    });
+
+  const signup = () =>
+    loginWithRedirect({
+      authorizationParams: {
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+        screen_hint: 'signup',
+      },
+    });
+
+  const logout = () =>
+    auth0Logout({ logoutParams: { returnTo: window.location.origin } });
+
+  const value = {
+    user: user ? { id: user.sub, name: user.name, email: user.email, picture: user.picture } : null,
+    isAuthenticated,
+    loading: isLoading,
+    login,
+    signup,
+    logout,
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('ttc-token');
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, isAuthenticated: !!token }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

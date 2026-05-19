@@ -83,8 +83,8 @@ export default function DashboardPage() {
       }}>
         <div>
           <h1 style={{
-            fontSize: '1.75rem', fontWeight: 800,
-            letterSpacing: '-0.02em', marginBottom: 'var(--space-xs)',
+            fontSize: '2rem', fontWeight: 800,
+            letterSpacing: '-0.03em', marginBottom: 'var(--space-xs)',
           }}>My Courses</h1>
           <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
             {courses.length} course{courses.length !== 1 ? 's' : ''} generated
@@ -92,34 +92,74 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Generate form */}
-      <form onSubmit={handleGenerate} className="animate-fade-in" style={{
-        display: 'flex', gap: 'var(--space-sm)',
-        marginBottom: 'var(--space-2xl)',
-      }}>
-        <div style={{ position: 'relative', flex: 1 }}>
-          <Sparkles size={16} style={{
-            position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
-            color: 'var(--accent-primary)',
-          }} />
-          <input
-            className="input"
-            placeholder="Enter a topic to generate a course… e.g. Machine Learning"
-            value={topic}
-            onChange={e => setTopic(e.target.value)}
-            disabled={generating}
-            style={{ paddingLeft: 40, fontSize: '0.9rem' }}
-          />
+      {/* Prompt hero — premium card with glowing input */}
+      <form
+        onSubmit={handleGenerate}
+        className="animate-fade-in glass"
+        style={{
+          position: 'relative',
+          padding: 'var(--space-lg)',
+          borderRadius: 'var(--radius-xl)',
+          marginBottom: 'var(--space-2xl)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* subtle background glow */}
+        <div style={{
+          position: 'absolute',
+          inset: '-40% -10% auto auto',
+          width: 320, height: 320,
+          background: 'radial-gradient(circle, var(--accent-glow-strong) 0%, transparent 60%)',
+          filter: 'blur(60px)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 'var(--space-sm)',
+            marginBottom: 'var(--space-sm)',
+          }}>
+            <Sparkles size={15} style={{ color: 'var(--accent-primary)' }} />
+            <span style={{
+              fontSize: '0.78rem', fontWeight: 600,
+              color: 'var(--text-secondary)',
+              letterSpacing: '0.02em', textTransform: 'uppercase',
+            }}>
+              Generate a course
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap' }}>
+            <input
+              className="input"
+              placeholder="e.g. Introduction to Machine Learning"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              disabled={generating}
+              style={{
+                flex: 1, minWidth: 240,
+                fontSize: '1rem', padding: '0.875rem 1rem',
+                background: 'var(--bg-tertiary)',
+              }}
+            />
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg"
+              disabled={generating || !topic.trim()}
+              style={{ whiteSpace: 'nowrap', opacity: generating ? 0.7 : 1 }}
+            >
+              {generating ? (
+                <>
+                  <Spinner size={16} style={{ borderTopColor: '#fff', borderColor: 'rgba(255,255,255,0.3)' }} />
+                  Generating…
+                </>
+              ) : (
+                <>Generate <Plus size={16} /></>
+              )}
+            </button>
+          </div>
         </div>
-        <button type="submit" className="btn btn-primary"
-          disabled={generating || !topic.trim()}
-          style={{ whiteSpace: 'nowrap', opacity: generating ? 0.7 : 1 }}>
-          {generating ? (
-            <><Spinner size={16} style={{ borderTopColor: '#fff', borderColor: 'rgba(255,255,255,0.3)' }} /> Generating…</>
-          ) : (
-            <><Plus size={16} /> Generate</>
-          )}
-        </button>
       </form>
 
       {/* Search */}

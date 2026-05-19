@@ -13,12 +13,19 @@ const lessonRoutes = require("./routes/lessonRoutes");
 
 const app = express();
 
-// Middleware
+// Middleware — allow any localhost / 127.0.0.1 origin in dev so we don't
+// get bit by port mismatches, IPv6 hostnames, or alt browser proxies.
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000"],
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // server-to-server / curl
+    if (/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin)) {
+      return cb(null, true);
+    }
+    cb(new Error(`Origin ${origin} not allowed by CORS`));
+  },
   credentials: true,
 }));
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
 // Health check

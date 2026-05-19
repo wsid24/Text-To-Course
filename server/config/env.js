@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const requiredVars = ["MONGO_URI", "JWT_SECRET", "GEMINI_API_KEY"];
+const requiredVars = ["MONGO_URI", "AUTH0_ISSUER_BASE_URL", "AUTH0_AUDIENCE"];
 
 for (const varName of requiredVars) {
   if (!process.env[varName]) {
@@ -12,10 +12,12 @@ for (const varName of requiredVars) {
 module.exports = {
   PORT: process.env.PORT || 5000,
   MONGO_URI: process.env.MONGO_URI,
-  JWT_SECRET: process.env.JWT_SECRET || "dev-secret-change-in-production",
-  AUTH0_ISSUER: process.env.AUTH0_ISSUER,
+  AUTH0_ISSUER_BASE_URL: process.env.AUTH0_ISSUER_BASE_URL,
   AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+  GROQ_API_KEY: process.env.GROQ_API_KEY,
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
+  LLM_PROVIDERS: process.env.LLM_PROVIDERS || "groq,gemini",
+  RAG_ENABLED: String(process.env.RAG_ENABLED || "false").toLowerCase() === "true",
   NODE_ENV: process.env.NODE_ENV || "development",
 };

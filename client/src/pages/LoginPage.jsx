@@ -1,102 +1,78 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { loginUser } from '../api/endpoints';
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { LogIn, UserPlus, ShieldCheck } from 'lucide-react';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await loginUser({ email, password });
-      login(res.data.token, res.data.user);
-      toast.success('Welcome back!');
-      navigate('/dashboard');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { login, signup } = useAuth();
 
   return (
     <div style={{
       minHeight: 'calc(100vh - 64px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 'var(--space-xl)',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      <div className="animate-scale-in" style={{
-        width: '100%', maxWidth: 420,
-        background: 'var(--bg-secondary)',
-        border: '1px solid var(--border-primary)',
-        borderRadius: 'var(--radius-xl)',
+      {/* Ambient glow */}
+      <div style={{
+        position: 'absolute',
+        top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 600, height: 600,
+        background: 'radial-gradient(circle, var(--accent-glow-strong) 0%, transparent 60%)',
+        filter: 'blur(80px)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
+
+      <div className="animate-scale-in glass" style={{
+        position: 'relative', zIndex: 1,
+        width: '100%', maxWidth: 440,
+        borderRadius: 'var(--radius-2xl)',
         padding: 'var(--space-2xl)',
+        textAlign: 'center',
+        boxShadow: 'var(--shadow-2xl)',
       }}>
-        <div style={{ textAlign: 'center', marginBottom: 'var(--space-xl)' }}>
-          <h1 style={{
-            fontSize: '1.5rem', fontWeight: 800,
-            letterSpacing: '-0.02em', marginBottom: 'var(--space-xs)',
-          }}>Welcome back</h1>
-          <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
-            Sign in to continue learning
-          </p>
+        <div style={{
+          width: 60, height: 60,
+          borderRadius: 'var(--radius-lg)',
+          background: 'var(--accent-gradient-soft)',
+          border: '1px solid var(--border-accent)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto var(--space-lg)',
+          boxShadow: '0 0 30px var(--accent-glow)',
+        }}>
+          <ShieldCheck size={26} style={{ color: 'var(--accent-primary)' }} />
         </div>
 
-        <form onSubmit={handleSubmit} style={{
-          display: 'flex', flexDirection: 'column', gap: 'var(--space-md)',
+        <h1 style={{
+          fontSize: '1.6rem', fontWeight: 800,
+          letterSpacing: '-0.025em', marginBottom: 'var(--space-xs)',
+        }}>Sign in to continue</h1>
+        <p style={{
+          color: 'var(--text-tertiary)',
+          fontSize: '0.875rem',
+          marginBottom: 'var(--space-xl)',
+          lineHeight: 1.55,
         }}>
-          <div style={{ position: 'relative' }}>
-            <Mail size={16} style={{
-              position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-              color: 'var(--text-tertiary)',
-            }} />
-            <input className="input" type="email" placeholder="Email address"
-              value={email} onChange={e => setEmail(e.target.value)}
-              style={{ paddingLeft: 38 }} required />
-          </div>
+          Authentication is handled securely via Auth0 (OAuth 2.0 / OIDC).
+        </p>
 
-          <div style={{ position: 'relative' }}>
-            <Lock size={16} style={{
-              position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-              color: 'var(--text-tertiary)',
-            }} />
-            <input className="input" type={showPw ? 'text' : 'password'}
-              placeholder="Password"
-              value={password} onChange={e => setPassword(e.target.value)}
-              style={{ paddingLeft: 38, paddingRight: 38 }} required />
-            <button type="button" onClick={() => setShowPw(!showPw)} style={{
-              position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-              color: 'var(--text-tertiary)', background: 'none', border: 'none',
-              cursor: 'pointer', padding: 4,
-            }}>
-              {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-
-          <button type="submit" className="btn btn-primary btn-lg"
-            disabled={loading}
-            style={{ marginTop: 'var(--space-sm)', width: '100%', opacity: loading ? 0.7 : 1 }}>
-            {loading ? 'Signing in…' : <>Sign In <ArrowRight size={16} /></>}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+          <button onClick={login} className="btn btn-primary btn-lg" style={{ width: '100%' }}>
+            <LogIn size={16} /> Sign in with Auth0
           </button>
-        </form>
+          <button onClick={signup} className="btn btn-secondary btn-lg" style={{ width: '100%' }}>
+            <UserPlus size={16} /> Create new account
+          </button>
+        </div>
 
         <p style={{
-          textAlign: 'center', marginTop: 'var(--space-lg)',
-          color: 'var(--text-tertiary)', fontSize: '0.85rem',
+          marginTop: 'var(--space-xl)',
+          fontSize: '0.72rem',
+          color: 'var(--text-tertiary)',
+          lineHeight: 1.5,
         }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{
-            color: 'var(--accent-primary)', fontWeight: 600,
-          }}>Sign up</Link>
+          By continuing you agree to the Terms and Privacy Policy.
         </p>
       </div>
     </div>
