@@ -13,14 +13,23 @@ const lessonRoutes = require("./routes/lessonRoutes");
 
 const app = express();
 
-// Middleware — allow any localhost / 127.0.0.1 origin in dev so we don't
-// get bit by port mismatches, IPv6 hostnames, or alt browser proxies.
+// CORS — accepts:
+//   * any localhost / 127.0.0.1 origin (dev convenience)
+//   * any URL listed in ALLOWED_ORIGINS (comma-separated), for prod hosts
+//     e.g. ALLOWED_ORIGINS=https://text-to-course.vercel.app,https://www.example.com
+// Server-to-server requests (no Origin header) are allowed unconditionally.
+const allowList = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // server-to-server / curl
+    if (!origin) return cb(null, true);
     if (/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin)) {
       return cb(null, true);
     }
+    if (allowList.includes(origin)) return cb(null, true);
     cb(new Error(`Origin ${origin} not allowed by CORS`));
   },
   credentials: true,
