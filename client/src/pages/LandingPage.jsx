@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Sparkles, BookOpen, Zap, ArrowRight, Brain, FileText, Layers, Shield } from 'lucide-react';
+import { Sparkles, BookOpen, Zap, ArrowRight, Brain, FileText, Layers, Shield, Cpu } from 'lucide-react';
 import AnimatedBackground from '../components/ui/AnimatedBackground';
 
 export default function LandingPage() {
@@ -90,7 +90,7 @@ export default function LandingPage() {
             marginBottom: 'var(--space-3xl)',
           }}>
             <Link to="/register" className="btn btn-primary btn-lg">
-              Get started <ArrowRight size={16} />
+              Sign up free <ArrowRight size={16} />
             </Link>
             <Link to="/login" className="btn btn-secondary btn-lg">
               Sign in
@@ -105,10 +105,12 @@ export default function LandingPage() {
             width: '100%', maxWidth: 880,
           }}>
             {[
-              { icon: Brain, label: 'Multi-stage AI pipeline', sub: 'Plan → write → validate' },
-              { icon: BookOpen, label: '3–6 modules · 3–5 lessons', sub: 'Structured curriculum' },
-              { icon: Layers, label: 'Interactive MCQ quizzes', sub: '4–5 per lesson, instant feedback' },
-              { icon: FileText, label: 'Offline PDF export', sub: 'jsPDF + html2canvas' },
+              { icon: Brain, label: 'Multi-stage AI pipeline', sub: 'Plan → write → validate → format' },
+              { icon: BookOpen, label: '3–6 modules · 3–5 lessons', sub: 'Curriculum, schema-enforced' },
+              { icon: Layers, label: 'Interactive MCQ quizzes', sub: '5–8 per lesson with instant feedback' },
+              { icon: FileText, label: 'Offline PDF export', sub: 'jsPDF, searchable text output' },
+              { icon: Cpu, label: 'Switchable LLM provider', sub: 'Groq primary, Gemini fallback' },
+              { icon: Zap, label: 'Redis-cached generation', sub: 'Duplicate prompts hit cache, not LLM' },
             ].map((f, i) => (
               <div key={i} className="glass glass-hover" style={{
                 padding: 'var(--space-lg) var(--space-md)',
