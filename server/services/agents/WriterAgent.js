@@ -7,17 +7,24 @@ const { lessonJSONSchema } = require("../../schemas/lesson.schema");
  * blocks, and 4–5 MCQs. Schema-bound output, RAG-grounded prompt.
  */
 class WriterAgent {
-  async run({ courseTitle, moduleTitle, lessonTitle, provider }) {
+  async run({ courseTitle, courseDescription, moduleTitle, lessonTitle, provider }) {
     const context = await RAGService.retrieveContext(`${lessonTitle} in ${courseTitle}`);
+
+    const courseScope = courseDescription
+      ? `Parent course: "${courseTitle}" — ${courseDescription}`
+      : `Parent course: "${courseTitle}"`;
 
     const system = `You are an expert educator. Write lesson content that is engaging,
 accurate, and grounded in the supplied context. Avoid hallucinations.
+
+${courseScope}
 
 <context>
 ${context}
 </context>
 
 Hard requirements:
+- The lesson MUST stay within the scope of the parent course described above. Interpret the lesson title through that lens — if the title is ambiguous, resolve it to whatever meaning fits the course (e.g. "Tables" inside a C++ course means data-structure tables, not chemistry tables).
 - Provide 2–4 clear learning objectives.
 - 4 to 7 paragraph/heading/code/video blocks BEFORE the MCQs.
 - End with 5 to 8 MCQ blocks. Use more questions for broader/harder topics, fewer for narrow ones — but never less than 5.

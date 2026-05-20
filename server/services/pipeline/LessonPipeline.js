@@ -11,7 +11,7 @@ const CacheService = require("../cache/CacheService");
  * to keep the cost predictable.
  */
 class LessonPipeline {
-  async run({ courseTitle, moduleTitle, lessonTitle, provider }) {
+  async run({ courseTitle, courseDescription, moduleTitle, lessonTitle, provider }) {
     const cacheKey = CacheService.keyFor("lesson", [courseTitle, moduleTitle, lessonTitle, provider || "auto"]);
 
     const { value, hit } = await CacheService.getOrSet(cacheKey, 86400 * 7, async () => {
@@ -19,7 +19,7 @@ class LessonPipeline {
       let lastErr;
       for (let attempt = 0; attempt < 2; attempt += 1) {
         try {
-          const raw = await WriterAgent.run({ courseTitle, moduleTitle, lessonTitle, provider });
+          const raw = await WriterAgent.run({ courseTitle, courseDescription, moduleTitle, lessonTitle, provider });
           const validated = ValidatorAgent.validateLesson(raw);
           return await FormatterAgent.formatLesson(validated);
         } catch (err) {

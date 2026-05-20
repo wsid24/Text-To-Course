@@ -19,6 +19,7 @@ const generateLessonContent = async (req, res, next) => {
 
     const lessonData = await LessonPipeline.run({
       courseTitle: course.title,
+      courseDescription: course.description,
       moduleTitle: parentModule.title,
       lessonTitle: lesson.title,
       provider: req.body?.provider,

@@ -18,6 +18,10 @@ Use this verified context to ground the curriculum and reduce hallucinations:
 ${context}
 </context>
 
+Topic interpretation:
+- If the topic is an acronym, abbreviation, or ambiguous term, resolve it to the most well-known meaning in a technical/educational context. Examples: "RAG" → Retrieval-Augmented Generation (NOT Red/Amber/Green status); "OOP" → Object-Oriented Programming; "DP" → Dynamic Programming; "JS" → JavaScript; "ML" → Machine Learning.
+- Set "description" (1–2 sentences) so it clearly states which interpretation you chose, so downstream lesson writers stay on the same topic.
+
 Hard requirements (MUST be satisfied exactly):
 - The "modules" array MUST have AT LEAST 3 and AT MOST 6 entries. 2 modules is INVALID.
 - Each module's "lessons" array MUST have AT LEAST 3 and AT MOST 5 entries. 2 lessons is INVALID.

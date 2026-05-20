@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/authMiddleware");
 const {
   generateCourse,
+  disambiguateTopic,
   getUserCourses,
   getCourseById,
   deleteCourse,
@@ -10,6 +11,9 @@ const {
 
 // Protect all course routes with JWT auth middleware
 router.use(authMiddleware);
+
+// POST /api/courses/disambiguate-topic — pre-flight check for ambiguous topics
+router.post("/disambiguate-topic", disambiguateTopic);
 
 // POST /api/courses/generate-course
 router.post("/generate-course", generateCourse);

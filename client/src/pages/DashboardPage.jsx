@@ -1,19 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getCourses, generateCourse, deleteCourse } from '../api/endpoints';
+import { getCourses, generateCourse, disambiguateTopic, deleteCourse } from '../api/endpoints';
 import Spinner from '../components/ui/Spinner';
 import EmptyState from '../components/ui/EmptyState';
 import {
   BookOpen, Plus, Trash2, ChevronRight, Sparkles,
-  Clock, Layers, Search, GraduationCap,
+  Clock, Layers, Search, GraduationCap, HelpCircle, X,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+// Topic looks acronym-ish if it's short OR contains an isolated 2-5 letter
+// uppercase token (e.g. "RAG" inside "What is RAG"). Used to skip the
+// disambiguation API call on obviously-unambiguous phrases like
+// "Introduction to Machine Learning".
+const looksAcronymish = (raw) => {
+  const t = raw.trim();
+  if (!t) return false;
+  if (t.length <= 6) return true;
+  return /(^|\s)[A-Z]{2,5}(\s|$|[?.!,])/.test(t);
+};
 
 export default function DashboardPage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [topic, setTopic] = useState('');
   const [generating, setGenerating] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [clarification, setClarification] = useState(null); // { interpretations: [...] } or null
   const [search, setSearch] = useState('');
   const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
@@ -31,12 +44,10 @@ export default function DashboardPage() {
 
   useEffect(() => { fetchCourses(); }, []);
 
-  const handleGenerate = async (e) => {
-    e.preventDefault();
-    if (!topic.trim()) return;
+  const runGeneration = async (finalTopic) => {
     setGenerating(true);
     try {
-      const res = await generateCourse({ topic: topic.trim() });
+      const res = await generateCourse({ topic: finalTopic });
       setCourses(prev => [res.data.course, ...prev]);
       setTopic('');
       toast.success('Course generated!');
@@ -46,6 +57,38 @@ export default function DashboardPage() {
     } finally {
       setGenerating(false);
     }
+  };
+
+  const handleGenerate = async (e) => {
+    e.preventDefault();
+    const trimmed = topic.trim();
+    if (!trimmed) return;
+
+    // Only run the pre-flight ambiguity check on acronym-ish topics.
+    // Spends one cheap LLM call on these instead of zero, and saves a much
+    // more expensive full-pipeline call on the wrong interpretation.
+    if (looksAcronymish(trimmed)) {
+      setChecking(true);
+      try {
+        const res = await disambiguateTopic(trimmed);
+        if (res.data.ambiguous && res.data.interpretations?.length > 1) {
+          setClarification({ interpretations: res.data.interpretations });
+          return;
+        }
+      } catch {
+        // Best-effort — fall through to generation if the check fails.
+      } finally {
+        setChecking(false);
+      }
+    }
+
+    runGeneration(trimmed);
+  };
+
+  const handleClarificationPick = (interpretation) => {
+    const augmented = `${topic.trim()} (${interpretation.label})`;
+    setClarification(null);
+    runGeneration(augmented);
   };
 
   const handleDelete = async (id) => {
@@ -136,7 +179,7 @@ export default function DashboardPage() {
               placeholder="e.g. Introduction to Machine Learning"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              disabled={generating}
+              disabled={generating || checking}
               style={{
                 flex: 1, minWidth: 240,
                 fontSize: '1rem', padding: '0.875rem 1rem',
@@ -146,13 +189,18 @@ export default function DashboardPage() {
             <button
               type="submit"
               className="btn btn-primary btn-lg"
-              disabled={generating || !topic.trim()}
-              style={{ whiteSpace: 'nowrap', opacity: generating ? 0.7 : 1 }}
+              disabled={generating || checking || !topic.trim()}
+              style={{ whiteSpace: 'nowrap', opacity: (generating || checking) ? 0.7 : 1 }}
             >
               {generating ? (
                 <>
                   <Spinner size={16} style={{ borderTopColor: '#fff', borderColor: 'rgba(255,255,255,0.3)' }} />
                   Generating…
+                </>
+              ) : checking ? (
+                <>
+                  <Spinner size={16} style={{ borderTopColor: '#fff', borderColor: 'rgba(255,255,255,0.3)' }} />
+                  Checking…
                 </>
               ) : (
                 <>Generate <Plus size={16} /></>
@@ -302,6 +350,114 @@ export default function DashboardPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Disambiguation modal — only shown when DisambiguatorAgent flags ambiguity */}
+      {clarification && (
+        <div
+          className="animate-fade-in"
+          onClick={() => setClarification(null)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 100,
+            background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 'var(--space-lg)',
+          }}
+        >
+          <div
+            className="glass"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: 520, width: '100%',
+              padding: 'var(--space-lg)',
+              borderRadius: 'var(--radius-xl)',
+              position: 'relative',
+            }}
+          >
+            <button
+              className="btn-icon"
+              onClick={() => setClarification(null)}
+              style={{
+                position: 'absolute', top: 'var(--space-sm)', right: 'var(--space-sm)',
+                color: 'var(--text-tertiary)',
+              }}
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 'var(--space-sm)',
+              marginBottom: 'var(--space-sm)',
+            }}>
+              <HelpCircle size={18} style={{ color: 'var(--accent-primary)' }} />
+              <span style={{
+                fontSize: '0.78rem', fontWeight: 600,
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.02em', textTransform: 'uppercase',
+              }}>
+                Did you mean…
+              </span>
+            </div>
+
+            <h3 style={{
+              fontSize: '1.15rem', fontWeight: 700,
+              marginBottom: 'var(--space-xs)',
+              color: 'var(--text-primary)',
+            }}>
+              "{topic.trim()}" could mean a few things
+            </h3>
+            <p style={{
+              color: 'var(--text-tertiary)',
+              fontSize: '0.85rem',
+              marginBottom: 'var(--space-md)',
+            }}>
+              Pick the one you want a course on so we don't generate the wrong topic.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+              {clarification.interpretations.map((it, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleClarificationPick(it)}
+                  style={{
+                    textAlign: 'left',
+                    padding: 'var(--space-md)',
+                    background: 'var(--bg-tertiary)',
+                    border: '1px solid var(--border-secondary)',
+                    borderRadius: 'var(--radius-lg)',
+                    cursor: 'pointer',
+                    transition: 'all var(--duration-base) var(--ease-out)',
+                    color: 'var(--text-primary)',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'var(--border-secondary)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    fontWeight: 600, fontSize: '0.95rem',
+                    marginBottom: 4,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  }}>
+                    <span>{it.label}</span>
+                    <ChevronRight size={14} style={{ color: 'var(--accent-primary)' }} />
+                  </div>
+                  <div style={{
+                    color: 'var(--text-tertiary)',
+                    fontSize: '0.8rem', lineHeight: 1.5,
+                  }}>
+                    {it.description}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

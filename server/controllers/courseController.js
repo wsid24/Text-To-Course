@@ -2,6 +2,22 @@ const Course = require("../models/Course");
 const Module = require("../models/Module");
 const Lesson = require("../models/Lesson");
 const CoursePipeline = require("../services/pipeline/CoursePipeline");
+const DisambiguatorAgent = require("../services/agents/DisambiguatorAgent");
+
+const disambiguateTopic = async (req, res, next) => {
+  try {
+    const { topic, provider } = req.body;
+    if (!topic || !topic.trim()) {
+      return res.status(400).json({ success: false, message: "Topic is required" });
+    }
+    const result = await DisambiguatorAgent.run(topic.trim(), { provider });
+    res.json({ success: true, ...result });
+  } catch (error) {
+    // Disambiguation is best-effort — never block course creation if it fails.
+    console.warn("Disambiguation failed:", error.message);
+    res.json({ success: true, ambiguous: false, interpretations: [] });
+  }
+};
 
 const generateCourse = async (req, res, next) => {
   try {
@@ -96,4 +112,4 @@ const deleteCourse = async (req, res, next) => {
   }
 };
 
-module.exports = { generateCourse, getUserCourses, getCourseById, deleteCourse };
+module.exports = { generateCourse, disambiguateTopic, getUserCourses, getCourseById, deleteCourse };

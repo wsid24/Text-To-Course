@@ -9,6 +9,8 @@ export const getCourses = () => API.get('/courses');
 export const getCourseById = (id) => API.get(`/courses/${id}`);
 export const generateCourse = (data) =>
   API.post('/courses/generate-course', { ...data, provider: getCurrentProvider() });
+export const disambiguateTopic = (topic) =>
+  API.post('/courses/disambiguate-topic', { topic, provider: getCurrentProvider() });
 export const deleteCourse = (id) => API.delete(`/courses/${id}`);
 
 // Lessons
